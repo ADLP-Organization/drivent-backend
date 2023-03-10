@@ -2,16 +2,18 @@ import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import * as jwt from "jsonwebtoken";
 import { createClient } from "redis";
-
-const redis = createClient({
-  url: process.env.REDIS_URL
-});
-
 import { unauthorizedError } from "@/errors";
 import { prisma } from "@/config";
 
+// const redis = createClient({
+//   url: process.env.REDIS_URL
+// });
+
+// async () => {
+//   await redis.connect();
+// };
+
 export async function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  await redis.connect();
   const authHeader = req.header("Authorization");
   if (!authHeader) return generateUnauthorizedResponse(res);
 
@@ -20,14 +22,17 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
 
   try {
     const { userId } = jwt.verify(token, process.env.JWT_SECRET) as JWTPayload;
+    //procurar em redis pela chave token (?), se n encontrar, pede ao banco e guarda no redis
+    //como deixar um informação temporária no redis?
 
+    //await redis.get("eu");
     const session = await prisma.session.findFirst({
       where: {
         token,
       },
     });
     if (!session) return generateUnauthorizedResponse(res);
-
+    
     req.userId = userId;
     //TODO mudar aqui
     return next();
