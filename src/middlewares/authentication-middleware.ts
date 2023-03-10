@@ -20,8 +20,9 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
 
   const { userId } = jwt.verify(token, process.env.JWT_SECRET) as JWTPayload;
   const r = await redis.get(token);
-
-  if(r === null) {
+  
+  if(r !== "true") {
+    console.log(r, token);
     console.log("Não tem no redis");
     try {
       const session = await prisma.session.findFirst({
@@ -32,9 +33,10 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
       if (!session) return generateUnauthorizedResponse(res);
       
       req.userId = userId;
-
       await redis.set(token, "true");
+      //await redis.expire(token, 1800);
       console.log("Guardei no redis");
+
       //TODO mudar aqui
       return next();
     } catch (err) {
