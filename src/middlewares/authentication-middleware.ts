@@ -1,11 +1,17 @@
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import * as jwt from "jsonwebtoken";
+import { createClient } from "redis";
+
+const redis = createClient({
+  url: process.env.REDIS_URL
+});
 
 import { unauthorizedError } from "@/errors";
 import { prisma } from "@/config";
 
 export async function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  await redis.connect();
   const authHeader = req.header("Authorization");
   if (!authHeader) return generateUnauthorizedResponse(res);
 
