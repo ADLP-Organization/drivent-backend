@@ -5,13 +5,11 @@ import { createClient } from "redis";
 import { unauthorizedError } from "@/errors";
 import { prisma } from "@/config";
 
-// const redis = createClient({
-//   url: process.env.REDIS_URL
-// });
+const redis = createClient({
+  url: process.env.REDIS_URL
+});
 
-// async () => {
-//   await redis.connect();
-// };
+redis.connect();
 
 export async function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   const authHeader = req.header("Authorization");
@@ -20,25 +18,30 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
   const token = authHeader.split(" ")[1];
   if (!token) return generateUnauthorizedResponse(res);
 
-  try {
-    const { userId } = jwt.verify(token, process.env.JWT_SECRET) as JWTPayload;
-    //procurar em redis pela chave token (?), se n encontrar, pede ao banco e guarda no redis
-    //como deixar um informação temporária no redis?
+  const { userId } = jwt.verify(token, process.env.JWT_SECRET) as JWTPayload;
+  const r = await redis.get(token);
 
-    //await redis.get("eu");
-    const session = await prisma.session.findFirst({
-      where: {
-        token,
-      },
-    });
-    if (!session) return generateUnauthorizedResponse(res);
-    
-    req.userId = userId;
-    //TODO mudar aqui
-    return next();
-  } catch (err) {
-    return generateUnauthorizedResponse(res);
+  if(r === null) {
+    console.log("Não tem no redis");
+    try {
+      const session = await prisma.session.findFirst({
+        where: {
+          token,
+        },
+      });
+      if (!session) return generateUnauthorizedResponse(res);
+      
+      req.userId = userId;
+
+      await redis.set(token, "true");
+      console.log("Guardei no redis");
+      //TODO mudar aqui
+      return next();
+    } catch (err) {
+      return generateUnauthorizedResponse(res);
+    }
   }
+  return next();
 }
 
 function generateUnauthorizedResponse(res: Response) {
