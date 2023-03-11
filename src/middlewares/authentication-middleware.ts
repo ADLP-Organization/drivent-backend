@@ -9,9 +9,12 @@ const redis = createClient({
   url: process.env.REDIS_URL
 });
 
-redis.connect();
+// async () => {
+  
+// };
 
 export async function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  await redis.connect();
   const authHeader = req.header("Authorization");
   if (!authHeader) return generateUnauthorizedResponse(res);
 
@@ -20,9 +23,8 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
 
   const { userId } = jwt.verify(token, process.env.JWT_SECRET) as JWTPayload;
   const r = await redis.get(token);
-  
-  if(r !== "true") {
-    console.log(r, token);
+
+  if(r === null) {
     console.log("Não tem no redis");
     try {
       const session = await prisma.session.findFirst({
@@ -33,10 +35,9 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
       if (!session) return generateUnauthorizedResponse(res);
       
       req.userId = userId;
-      await redis.set(token, "true");
-      //await redis.expire(token, 1800);
-      console.log("Guardei no redis");
 
+      await redis.set(token, "true");
+      console.log("Guardei no redis");
       //TODO mudar aqui
       return next();
     } catch (err) {
