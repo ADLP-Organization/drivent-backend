@@ -3,6 +3,7 @@ import enrollmentRepository from "@/repositories/enrollment-repository";
 import ticketRepository from "@/repositories/ticket-repository";
 import { notFoundError } from "@/errors";
 import { cannotListHotelsError } from "@/errors/cannot-list-hotels-error";
+import roomRepository from "@/repositories/room-repository";
 
 async function listHotels(userId: number) {
   //Tem enrollment?
@@ -21,7 +22,14 @@ async function listHotels(userId: number) {
 async function getHotels(userId: number) {
   await listHotels(userId);
 
-  const hotels = await hotelRepository.findHotels();
+  const hotelsList = await hotelRepository.findHotels();
+  const capacity = await roomRepository.countCapacity();
+  const roomTypes = await roomRepository.findTypes();
+
+  const hotels = {
+    hotelsList, capacity, roomTypes
+  };
+
   return hotels;
 }
 
