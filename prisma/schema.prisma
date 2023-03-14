@@ -155,9 +155,9 @@ model Activities {
   id            Int       @id @default(autoincrement())
   dayId         Int
   Days          Days      @relation(fields: [dayId], references: [id])
-  hourStart
-  hourEnd
-  capacity
+  hourStart     Int
+  hourEnd       Int
+  capacity      Int
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   Subscription  Subscription[]
