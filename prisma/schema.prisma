@@ -11,14 +11,15 @@ datasource db {
 }
 
 model User {
-  id         Int          @id @default(autoincrement())
-  email      String       @unique @db.VarChar(255)
-  password   String       @db.VarChar(255)
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  Session    Session[]
-  Enrollment Enrollment[]
-  Booking    Booking[]
+  id            Int          @id @default(autoincrement())
+  email         String       @unique @db.VarChar(255)
+  password      String       @db.VarChar(255)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  Session       Session[]
+  Enrollment    Enrollment[]
+  Booking       Booking[]
+  Subscription  Subscription[]
 }
 
 model Session {
@@ -37,6 +38,7 @@ model Event {
   logoImageUrl       String   @db.VarChar(255)
   startsAt           DateTime
   endsAt             DateTime
+  Days               Days[]
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 }
@@ -135,6 +137,38 @@ model Booking {
   userId    Int
   Room      Room     @relation(fields: [roomId], references: [id])
   roomId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Days {
+  id          Int      @id @default(autoincrement())
+  eventId     Int
+  Event       Event    @relation(fields: [eventId], references: [id])
+  date        DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  Activities  Activities[]
+}
+
+model Activities {
+  id            Int       @id @default(autoincrement())
+  dayId         Int
+  Days          Days      @relation(fields: [dayId], references: [id])
+  hourStart     Int
+  hourEnd       Int
+  capacity      Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  Subscription  Subscription[]
+}
+
+model Subscription {
+  id              Int           @id @default(autoincrement())
+  userId          Int
+  User            User          @relation(fields: [userId], references: [id])
+  activityId      Int
+  Activities      Activities    @relation(fields: [activityId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
