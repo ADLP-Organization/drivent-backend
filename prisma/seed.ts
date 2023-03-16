@@ -16,6 +16,29 @@ async function main() {
     });
   }
 
+  await prisma.ticketType.createMany({
+    skipDuplicates: true,
+    data: [{
+        name: 'Online',
+        price: 150,
+        isRemote: true,
+        includesHotel: false
+      },
+      {
+        name: 'Presencial sem Hotel',
+        price: 250,
+        isRemote: false,
+        includesHotel: false
+      },
+      {
+        name: 'Presencial com Hotel',
+        price: 600,
+        isRemote: false,
+        includesHotel: true
+      },      
+    ]
+  });
+
   await prisma.hotel.createMany({
     skipDuplicates: true,
     data: [{
@@ -80,6 +103,26 @@ async function main() {
       { name: '302', capacity: 2, hotelId: 3 },
       { name: '303', capacity: 3, hotelId: 3 },
       { name: '304', capacity: 3, hotelId: 3 },       
+    ]
+  });
+
+  await prisma.days.createMany({
+    skipDuplicates: true,
+    data: [
+      { eventId: 1, date: dayjs('2023-05-07').toDate()},
+      { eventId: 1, date: dayjs('2023-05-08').toDate()},
+      { eventId: 1, date: dayjs('2023-05-09').toDate()},
+    ]
+  });
+
+ 
+
+  await prisma.activities.createMany({
+    skipDuplicates: true,
+    data: [
+      { dayId: 1, hourStart: 9, hourEnd: 11, capacity: 50 },
+      { dayId: 1, hourStart: 14, hourEnd: 15, capacity: 50 },
+      { dayId: 1, hourStart: 15, hourEnd: 17, capacity: 50 },
     ]
   });
 
