@@ -16,6 +16,29 @@ async function main() {
     });
   }
 
+  await prisma.ticketType.createMany({
+    skipDuplicates: true,
+    data: [{
+        name: 'Online',
+        price: 150,
+        isRemote: true,
+        includesHotel: false
+      },
+      {
+        name: 'Presencial sem Hotel',
+        price: 250,
+        isRemote: false,
+        includesHotel: false
+      },
+      {
+        name: 'Presencial com Hotel',
+        price: 600,
+        isRemote: false,
+        includesHotel: true
+      },      
+    ]
+  });
+
   await prisma.hotel.createMany({
     skipDuplicates: true,
     data: [{
@@ -80,6 +103,46 @@ async function main() {
       { name: '302', capacity: 2, hotelId: 3 },
       { name: '303', capacity: 3, hotelId: 3 },
       { name: '304', capacity: 3, hotelId: 3 },       
+    ]
+  });
+
+  await prisma.days.createMany({
+    skipDuplicates: true,
+    data: [
+      { eventId: 1, date: dayjs('2023-05-07').toDate()},
+      { eventId: 1, date: dayjs('2023-05-08').toDate()},
+      { eventId: 1, date: dayjs('2023-05-09').toDate()},
+    ]
+  });
+
+  await prisma.locals.createMany({
+    skipDuplicates: true,
+    data: [
+      { name: 'Auditório Principal' },
+      { name: 'Auditório Lateral' },
+      { name: 'Sala de Workshop' },
+    ]
+  });
+
+  await prisma.activities.createMany({
+    skipDuplicates: true,
+    data: [
+      { dayId: 1, localId: 1, hourStart: 9, hourEnd: 11, capacity: 150 },
+      { dayId: 1, localId: 1, hourStart: 14, hourEnd: 17, capacity: 150 },
+      { dayId: 1, localId: 2, hourStart: 9, hourEnd: 10, capacity: 50 },
+      { dayId: 1, localId: 2, hourStart: 10, hourEnd: 11, capacity: 50 },
+      { dayId: 1, localId: 3, hourStart: 9, hourEnd: 12, capacity: 20 },
+      { dayId: 1, localId: 3, hourStart: 14, hourEnd: 16, capacity: 20 },
+      { dayId: 2, localId: 1, hourStart: 9, hourEnd: 12, capacity: 150 },
+      { dayId: 2, localId: 1, hourStart: 14, hourEnd: 17, capacity: 150 },
+      { dayId: 2, localId: 2, hourStart: 10, hourEnd: 12, capacity: 50 },
+      { dayId: 2, localId: 3, hourStart: 9, hourEnd: 12, capacity: 20 },
+      { dayId: 2, localId: 3, hourStart: 14, hourEnd: 17, capacity: 20 },
+      { dayId: 3, localId: 1, hourStart: 9, hourEnd: 12, capacity: 150 },
+      { dayId: 3, localId: 1, hourStart: 14, hourEnd: 16, capacity: 150 },
+      { dayId: 3, localId: 2, hourStart: 9, hourEnd: 12, capacity: 50 },
+      { dayId: 3, localId: 3, hourStart: 9, hourEnd: 11, capacity: 20 },
+      { dayId: 3, localId: 3, hourStart: 14, hourEnd: 16, capacity: 20 },
     ]
   });
 

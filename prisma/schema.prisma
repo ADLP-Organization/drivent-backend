@@ -145,15 +145,25 @@ model Days {
   @@index([date], map: "index_data_crescente")
 }
 
+model Locals {
+  id         Int          @id @default(autoincrement())
+  name       String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  Activities Activities[]
+}
+
 model Activities {
   id           Int            @id @default(autoincrement())
   dayId        Int
+  localId      Int
   hourStart    Int
   hourEnd      Int
   capacity     Int
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   Days         Days           @relation(fields: [dayId], references: [id])
+  Locals       Locals         @relation(fields: [localId], references: [id])
   Subscription Subscription[]
 }
 
