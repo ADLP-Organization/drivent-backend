@@ -23,7 +23,6 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
 
   const { userId } = jwt.verify(token, process.env.JWT_SECRET) as JWTPayload;
   const r = await redis.get(token);
-  console.log(r);
   if(r === null) {
     try {
       const session = await prisma.session.findFirst({
