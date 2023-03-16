@@ -115,14 +115,34 @@ async function main() {
     ]
   });
 
- 
+  await prisma.locals.createMany({
+    skipDuplicates: true,
+    data: [
+      { name: 'Auditório Principal' },
+      { name: 'Auditório Lateral' },
+      { name: 'Sala de Workshop' },
+    ]
+  });
 
   await prisma.activities.createMany({
     skipDuplicates: true,
     data: [
-      { dayId: 1, hourStart: 9, hourEnd: 11, capacity: 50 },
-      { dayId: 1, hourStart: 14, hourEnd: 15, capacity: 50 },
-      { dayId: 1, hourStart: 15, hourEnd: 17, capacity: 50 },
+      { dayId: 1, localId: 1, hourStart: 9, hourEnd: 11, capacity: 150 },
+      { dayId: 1, localId: 1, hourStart: 14, hourEnd: 17, capacity: 150 },
+      { dayId: 1, localId: 2, hourStart: 9, hourEnd: 10, capacity: 50 },
+      { dayId: 1, localId: 2, hourStart: 10, hourEnd: 11, capacity: 50 },
+      { dayId: 1, localId: 3, hourStart: 9, hourEnd: 12, capacity: 20 },
+      { dayId: 1, localId: 3, hourStart: 14, hourEnd: 16, capacity: 20 },
+      { dayId: 2, localId: 1, hourStart: 9, hourEnd: 12, capacity: 150 },
+      { dayId: 2, localId: 1, hourStart: 14, hourEnd: 17, capacity: 150 },
+      { dayId: 2, localId: 2, hourStart: 10, hourEnd: 12, capacity: 50 },
+      { dayId: 2, localId: 3, hourStart: 9, hourEnd: 12, capacity: 20 },
+      { dayId: 2, localId: 3, hourStart: 14, hourEnd: 17, capacity: 20 },
+      { dayId: 3, localId: 1, hourStart: 9, hourEnd: 12, capacity: 150 },
+      { dayId: 3, localId: 1, hourStart: 14, hourEnd: 16, capacity: 150 },
+      { dayId: 3, localId: 2, hourStart: 9, hourEnd: 12, capacity: 50 },
+      { dayId: 3, localId: 3, hourStart: 9, hourEnd: 11, capacity: 20 },
+      { dayId: 3, localId: 3, hourStart: 14, hourEnd: 16, capacity: 20 },
     ]
   });
 
