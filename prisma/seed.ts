@@ -115,14 +115,20 @@ async function main() {
     ]
   });
 
- 
+ await prisma.locals.createMany({
+  skipDuplicates: true,
+  data: [
+    {name: 'Auditório 01'},
+    {name: 'Lab de Robótica'}
+  ]
+ })
 
   await prisma.activities.createMany({
     skipDuplicates: true,
     data: [
-      { dayId: 1, hourStart: 9, hourEnd: 11, capacity: 50 },
-      { dayId: 1, hourStart: 14, hourEnd: 15, capacity: 50 },
-      { dayId: 1, hourStart: 15, hourEnd: 17, capacity: 50 },
+      { localId: 1, dayId: 1, hourStart: 9, hourEnd: 11, capacity: 50 },
+      { localId: 1, dayId: 1, hourStart: 14, hourEnd: 15, capacity: 50 },
+      { localId: 2, dayId: 1, hourStart: 15, hourEnd: 17, capacity: 50 },
     ]
   });
 
