@@ -18,7 +18,7 @@ CREATE TABLE "Locals" (
 );
 
 -- CreateIndex
-CREATE INDEX "index_data_crescente" ON "Days"("date");
+CREATE INDEX "index_data_crescente" ON "Days"("date" DESC);
 
 -- AddForeignKey
 ALTER TABLE "Activities" ADD CONSTRAINT "Activities_localId_fkey" FOREIGN KEY ("localId") REFERENCES "Locals"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
