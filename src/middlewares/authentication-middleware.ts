@@ -1,20 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import * as jwt from "jsonwebtoken";
-import { createClient } from "redis";
 import { unauthorizedError } from "@/errors";
 import { prisma } from "@/config";
-
-const redis = createClient({
-  url: process.env.REDIS_URL
-});
-
-//  async () => {
-  
-// };
+import { redis } from "@/config/redis";
 
 export async function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  await redis.connect();
+  //await redis.connect();
   const authHeader = req.header("Authorization");
   if (!authHeader) return generateUnauthorizedResponse(res);
 
@@ -32,9 +24,9 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
       });
       if (!session) return generateUnauthorizedResponse(res);
       
-      await redis.set(token, "true");
+      //await redis.set(token, "true");
       req.userId = userId;
-      await redis.disconnect();
+      //await redis.disconnect();
       //TODO mudar aqui
       return next();
     } catch (err) {
@@ -43,7 +35,7 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
     }
   }else{
     req.userId = userId;
-    await redis.disconnect();
+    //await redis.disconnect();
     return next();
   }
 }
