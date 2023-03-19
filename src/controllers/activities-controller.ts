@@ -3,6 +3,7 @@ import { AuthenticatedRequest } from "@/middlewares";
 import activitiesService from "@/services/activities-service";
 import httpStatus from "http-status";
 import { Days } from "@prisma/client";
+import { conflictError } from "@/errors";
 
 export async function getEventDays(req: AuthenticatedRequest, res: Response) {
   try {
@@ -27,24 +28,32 @@ export async function getDayWithActivities(req: AuthenticatedRequest, res: Respo
 export async function postSubscribe(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
   const { activityId, hourStart, hourEnd } = req.body;
+  
   try {
-    const userActivityByActivityId = await activitiesService.userActivityByActivityId(userId, activityId);
-    const userActivities = await activitiesService.userActivities(userId);
-
-    if(userActivities.length !== 0) {
-      userActivities.map((activity) => {
-        //console.log(activity.Activities);
-      });
-    }
+    const userActivityByActivityId = await activitiesService.userActivityByActivityId(userId, activityId);    
 
     if(userActivityByActivityId) {
       await activitiesService.deleteSubscribe(userActivityByActivityId[0].id);
       return res.send("Canceled activity subscription").status(200);
     }else{
+      const userActivities = await activitiesService.userActivities(userId);
+
+      if(userActivities.length !== 0) {
+        userActivities.map((activity) => {
+          if(activity.Activities.hourStart === hourStart || 
+            (activity.Activities.hourStart >= hourStart && activity.Activities.hourStart < hourEnd) 
+          ) {
+            throw conflictError("Choose activities that take place at different times");
+          }
+        });
+      }
       await activitiesService.subscribe(userId, activityId);
       return res.send("Enrollment in the activity done successfully").status(201);
     }
   } catch (error) {
+    if(error.name === "ConflictError") {
+      return res.send("Choose activities that take place at different times").status(httpStatus.CONFLICT);
+    }
     return res.sendStatus(httpStatus.BAD_REQUEST);
   }
 }
