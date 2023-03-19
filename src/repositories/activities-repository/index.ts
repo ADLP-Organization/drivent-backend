@@ -1,8 +1,7 @@
 import { prisma } from "@/config";
 
 async function findEventDays() {
-  return prisma.days.findMany({
-  });
+  return prisma.days.findMany();
 }
 
 async function findActivitiesByDayId(dayId: number) {
