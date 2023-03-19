@@ -18,8 +18,7 @@ export async function getDayWithActivities(req: AuthenticatedRequest, res: Respo
   const { dayId } = req.params;
   try {
     const activities = await activitiesService.activitiesByDayId(Number(dayId));
-
-    return res.status(httpStatus.OK).send({ activities });
+    return res.status(httpStatus.OK).send( activities );
   } catch (error) {
     return res.sendStatus(httpStatus.BAD_REQUEST);
   }
@@ -27,11 +26,25 @@ export async function getDayWithActivities(req: AuthenticatedRequest, res: Respo
 
 export async function postSubscribe(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
+  const { activityId, hourStart, hourEnd } = req.body;
+  try {
+    const userActivityByActivityId = await activitiesService.userActivityByActivityId(userId, activityId);
+    const userActivities = await activitiesService.userActivities(userId);
 
-  // try {
+    if(userActivities.length !== 0) {
+      userActivities.map((activity) => {
+        //console.log(activity.Activities);
+      });
+    }
 
-  // } catch (error) {
-
-  //   return res.sendStatus(httpStatus.BAD_REQUEST);
-  // }
+    if(userActivityByActivityId) {
+      await activitiesService.deleteSubscribe(userActivityByActivityId[0].id);
+      return res.send("Canceled activity subscription").status(200);
+    }else{
+      await activitiesService.subscribe(userId, activityId);
+      return res.send("Enrollment in the activity done successfully").status(201);
+    }
+  } catch (error) {
+    return res.sendStatus(httpStatus.BAD_REQUEST);
+  }
 }
