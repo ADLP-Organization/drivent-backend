@@ -10,6 +10,10 @@ export async function cleanDb() {
   await prisma.payment.deleteMany({});
   await prisma.ticket.deleteMany({});
   await prisma.enrollment.deleteMany({});
+  await prisma.subscription.deleteMany({});
+  await prisma.activities.deleteMany({});
+  await prisma.locals.deleteMany({});
+  await prisma.days.deleteMany({});
   await prisma.event.deleteMany({});
   await prisma.session.deleteMany({});
   await prisma.booking.deleteMany({});
