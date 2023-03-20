@@ -30,6 +30,16 @@ export async function getDayWithActivities(req: AuthenticatedRequest, res: Respo
   }
 }
 
+export async function getUserActivities(req: AuthenticatedRequest, res: Response) {
+  const { userId } = req;
+  try {
+    const userActivities = await activitiesService.userActivities(userId);
+    return res.status(httpStatus.OK).send( userActivities );
+  } catch (error) {
+    return res.sendStatus(httpStatus.BAD_REQUEST);
+  }
+}
+
 export async function postSubscribe(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
   const { activityId, hourStart, hourEnd } = req.body;
