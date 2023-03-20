@@ -8,6 +8,9 @@ async function findActivitiesByDayId(dayId: number) {
   return prisma.activities.findMany({
     where: {
       dayId
+    },
+    orderBy: {
+      id: "asc"
     }
   });
 }
