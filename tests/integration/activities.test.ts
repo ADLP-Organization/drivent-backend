@@ -45,7 +45,7 @@ describe("GET /days", () => {
     const userWithoutSession = await createUser();
     const token = jwt.sign({ userId: userWithoutSession.id }, process.env.JWT_SECRET);
 
-    const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
+    const response = await server.get("/days").set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
@@ -62,7 +62,7 @@ describe("GET /days", () => {
       const dayOfActivites = await createDay(event.id);
       //Hoteis no banco
 
-      const response = await server.get("/get").set("Authorization", `Bearer ${token}`);
+      const response = await server.get("/days").set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toEqual(httpStatus.OK);
       expect(response.body).toEqual({
