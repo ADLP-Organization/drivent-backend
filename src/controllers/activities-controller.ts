@@ -4,13 +4,18 @@ import activitiesService from "@/services/activities-service";
 import httpStatus from "http-status";
 import { Days } from "@prisma/client";
 import { conflictError } from "@/errors";
+import { NotFoundError } from "@/protocols";
 
 export async function getEventDays(req: AuthenticatedRequest, res: Response) {
+  const { userId } = req;
   try {
-    const days: Days[] = await activitiesService.eventDays();
-    console.log("days: ", days);
+    const days: Days[] = await activitiesService.eventDays(Number(userId));
+    
     return res.status(httpStatus.OK).send( days );
   } catch (error) {
+    if (error.name === "NotFoundError") {
+      return res.sendStatus(httpStatus.NOT_FOUND);
+    }
     return res.sendStatus(httpStatus.BAD_REQUEST);
   }
 }

@@ -1,11 +1,22 @@
 import { notFoundError } from "@/errors";
+import { NotFoundError } from "@/protocols";
 import activitiesRepository from "@/repositories/activities-repository";
+import enrollmentRepository from "@/repositories/enrollment-repository";
+import ticketRepository from "@/repositories/ticket-repository";
 import { Days } from "@prisma/client";
 
-async function eventDays(): Promise<Days[]> {
+async function eventDays(userId: number): Promise<Days[]>  {
+  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
+  if (!enrollment) {
+    throw notFoundError();
+  }
+  //Tem ticket pago isOnline false e includesHotel true
+  const ticket = await ticketRepository.findTicketByEnrollmentId(enrollment.id);
+
+  if (!ticket) {
+    throw notFoundError();
+  }
   const eventDays = await activitiesRepository.findEventDays();
-  //console.log("eventeDays: ", eventDays);
-  if (!eventDays) throw notFoundError();
 
   return eventDays;
 }
