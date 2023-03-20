@@ -30,3 +30,5 @@ export type RequestError = {
   name: string,
   message: string,
 };
+
+export type NotFoundError = {name: string, message: string};
