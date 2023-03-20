@@ -160,6 +160,7 @@ model Activities {
   hourStart    Int
   hourEnd      Int
   capacity     Int
+  name         String         
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   Days         Days           @relation(fields: [dayId], references: [id])
