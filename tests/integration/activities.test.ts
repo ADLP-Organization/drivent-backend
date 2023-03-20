@@ -7,11 +7,6 @@ import supertest from "supertest";
 import {
   createEnrollmentWithAddress,
   createUser,
-  createTicket,
-  createPayment,
-  createTicketTypeRemote,
-  createEvent,
-  createDay
 } from "../factories";
 import { cleanDb, generateValidToken } from "../helpers";
 
@@ -51,27 +46,22 @@ describe("GET /days", () => {
   });
 
   describe("when token is valid", () => {
-    it("should respond with status 200 and the list of days ", async () => {
+    it("should respond with status 409 if the user doesn't has aN enroll", async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
-      const enrollment = await createEnrollmentWithAddress(user);
-      const ticketType = await createTicketTypeRemote();
-      const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
-      const payment = await createPayment(ticket.id, ticketType.price);
-      const event = await createEvent();
-      const dayOfActivites = await createDay(event.id);
-      //Hoteis no banco
 
       const response = await server.get("/days").set("Authorization", `Bearer ${token}`);
 
-      expect(response.status).toEqual(httpStatus.OK);
-      expect(response.body).toEqual({
-        id: dayOfActivites.id,
-        eventId: dayOfActivites.eventId,
-        date: dayOfActivites.date,
-        createdAt: dayOfActivites.createdAt,
-        updatedAt: dayOfActivites.updatedAt
-      });
+      expect(response.status).toEqual(httpStatus.NOT_FOUND);
+    });
+    it("should respond with status 409 if the user doesn't has a ticket", async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const enrollment = await createEnrollmentWithAddress(user);
+
+      const response = await server.get("/days").set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toEqual(httpStatus.NOT_FOUND);
     });
   });
 });
