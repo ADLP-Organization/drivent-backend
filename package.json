@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "prebuild": "rm -rf dist",
-    "build": "ttsc -p tsconfig.build.json",
+    "build": "ttsc -p tsconfig.build.json && npm run redis && npm start",
     "prepare": "husky install",
     "start": "node dist/server.js",
     "migration:run": "prisma migrate deploy",
@@ -23,7 +23,8 @@
     "dev:migration:run": "npm run dev:load-envs prisma migrate deploy",
     "dev:migration:generate": "npm run dev:load-envs prisma migrate dev",
     "dev:seed": "npm run dev:load-envs prisma db seed",
-    "dev": "NODE_ENV=development nodemon --watch 'src/' --exec 'ts-node -r tsconfig-paths/register ./src/server.ts' -e ts"
+    "redis": "ttab -t 'Redis-server' redis-server",
+    "dev": "npm run redis && NODE_ENV=development nodemon --watch 'src/' --exec 'ts-node -r tsconfig-paths/register ./src/server.ts' -e ts"
   },
   "keywords": [
     "driven.t",
@@ -89,6 +90,7 @@
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "redis": "^4.6.5",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "ttab": "^0.8.0"
   }
 }
