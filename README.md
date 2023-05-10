@@ -4,6 +4,8 @@ Back-end for Driven.t, an event management solution.
 
 :)
 
+Check out the front-end of this project here: https://github.com/ADLP-Organization/drivent-frontend.git
+
 ## About
 
 Driven.t is a web browser application with which you can manage every single aspect of your event.
